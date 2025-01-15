@@ -72,7 +72,7 @@ jobs:
         make O=out ARCH=arm64 CC=clang $BA_CMD $EX_CMD $DEFCONFIG
         make -j$(nproc --all) O=out ARCH=arm64 CC=clang $BA_CMD $EX_CMD
 
-    - name: Check a kernel output files with KernelSU Next
+    - name: Check kernel output files for KernelSU Next
       run: |
        cd $GITHUB_WORKSPACE/kernel_workspace
        if [ -f android-kernel/out/arch/arm64/boot/Image ]; then
@@ -86,8 +86,17 @@ jobs:
       if: env.CHECK_IMAGE_1 == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        rm -rf AnyKernel3/Image
+        git clone https://github.com/osm0sis/AnyKernel3 --depth=1 AnyKernel3
+        sed -i 's/do.devicecheck=1/do.devicecheck=0/g' AnyKernel3/anykernel.sh
+        sed -i 's!BLOCK=/dev/block/bootdevice/by-name/boot;!BLOCK=auto;!g' AnyKernel3/anykernel.sh
+        sed -i 's/IS_SLOT_DEVICE=0;/IS_SLOT_DEVICE=auto;/g' AnyKernel3/anykernel.sh
         cp android-kernel/out/arch/arm64/boot/Image AnyKernel3/
+        rm -rf AnyKernel3/.git* AnyKernel3/README.md
+
+    - name: Compress AnyKernel3 folder with KernelSU-Next to zip
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/AnyKernel3
+        zip -r $GITHUB_WORKSPACE/AK3-LOS22.1-Joan_KernelSU-Next_${{ env.KSUVER }}-${{ env.BUILD_TIME }}.zip ./*
 
     - name: Upload Image
       if: env.CHECK_IMAGE_1 == 'true'
@@ -96,7 +105,7 @@ jobs:
         name: Image-LOS22.1-Joan_KernelSU-Next_${{ env.KSUVER_1 }}
         path: kernel_workspace/android-kernel/out/arch/arm64/boot/Image
 
-    - name: Upload AnyKernel3
+    - name: Upload AnyKernel3 zip
       if: env.CHECK_IMAGE_1 == 'true'
       uses: actions/upload-artifact@v4
       with:
