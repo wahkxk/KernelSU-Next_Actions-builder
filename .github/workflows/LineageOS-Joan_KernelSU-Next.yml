@@ -26,14 +26,14 @@ jobs:
         sudo apt-get install git ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python2 python3
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
     
-    - name: Download Clang-aosp
+    - name: Download Clang from aosp
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         mkdir clang-aosp
         wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main-kernel-build-2023/clang-r487747c.tar.gz
         tar -C clang-aosp/ -zxvf clang-r487747c.tar.gz
     
-    - name: Download Gcc-aosp
+    - name: Download Gcc from aosp
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
           mkdir gcc-64
@@ -72,7 +72,7 @@ jobs:
         make O=out ARCH=arm64 CC=clang $BA_CMD $EX_CMD $DEFCONFIG
         make -j$(nproc --all) O=out ARCH=arm64 CC=clang $BA_CMD $EX_CMD
 
-    - name: Check kernel output files for KernelSU Next
+    - name: Check kernel output files for Kernel
       run: |
        cd $GITHUB_WORKSPACE/kernel_workspace
        if [ -f android-kernel/out/arch/arm64/boot/Image ]; then
@@ -82,7 +82,7 @@ jobs:
            exit 1
        fi
 
-    - name: Make AnyKernel3 with KernelSU Next
+    - name: Make AnyKernel3 with Kernel
       if: env.CHECK_IMAGE_1 == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
@@ -90,7 +90,7 @@ jobs:
         cp android-kernel/out/arch/arm64/boot/Image AnyKernel3/
         rm -rf AnyKernel3/.git*
 
-    - name: Compress AnyKernel3 folder with KernelSU-Next to zip
+    - name: Compress AnyKernel3 folder with Kernel to zip
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/AnyKernel3
         zip -r $GITHUB_WORKSPACE/AK3-LOS22.1-Joan_KernelSU-Next_${{ env.KSUVER }}-${{ env.BUILD_TIME }}.zip ./*
