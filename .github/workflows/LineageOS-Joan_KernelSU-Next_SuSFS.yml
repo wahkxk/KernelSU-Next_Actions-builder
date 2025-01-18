@@ -46,7 +46,7 @@ jobs:
     - name: Download kernel source
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone --recursive https://github.com/JacoaFur/android_kernel_lge_msm8998.git -b susfs android-kernel --depth=1
+        git clone --recursive https://github.com/JacoaFur/android_kernel_lge_msm8998.git -b SuSFS android-kernel --depth=1
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/scripts
         sed -i 's/ -dirty//g' setlocalversion
 
@@ -57,7 +57,7 @@ jobs:
         curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -
         KSU_VERSION_1=$(cd KernelSU-Next && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
         echo "KSUVER_1=$KSU_VERSION_1" >> $GITHUB_ENV
-        wget https://gitlab.com/simonpunk/susfs4ksu/-/raw/kernel-4.14/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch
+        wget https://gitlab.com/simonpunk/susfs4ksu/-/raw/kernel-4.9/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch
         patch -p1 --forward < 10_enable_susfs_for_ksu.patch || true
 
     - name: Build kernel with KernelSU Next and SuSFS
