@@ -86,7 +86,7 @@ jobs:
       if: env.CHECK_IMAGE_1 == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://github.com/JacoaFur/AnyKernel3-gta4xl.git --depth=1 AnyKernel3
+        git clone https://github.com/JacoaFur/AnyKernel3-Joan.git --depth=1 AnyKernel3
         cp android-kernel/out/arch/arm64/boot/Image AnyKernel3/
         rm -rf AnyKernel3/.git*
 
