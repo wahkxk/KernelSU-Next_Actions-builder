@@ -50,11 +50,15 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/scripts
         sed -i 's/ -dirty//g' setlocalversion
 
-    - name: Setup KernelSU Next
+    - name: Setup KernelSU Next with SuSFS
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        rm -rf KernelSU-Next
+        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -
         KSU_VERSION_1=$(cd KernelSU-Next && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
         echo "KSUVER_1=$KSU_VERSION_1" >> $GITHUB_ENV
+        wget https://gitlab.com/simonpunk/susfs4ksu/-/raw/kernel-4.14/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch
+        patch -p1 --forward < 10_enable_susfs_for_ksu.patch || true
 
     - name: Build kernel with KernelSU Next
       run: |
