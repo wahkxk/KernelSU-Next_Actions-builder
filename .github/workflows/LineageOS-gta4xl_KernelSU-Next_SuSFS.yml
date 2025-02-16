@@ -46,7 +46,7 @@ jobs:
     - name: Download kernel source
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone --recursive https://github.com/Nova-Kernels/kernel_xiaomi_pissarro.git -b lineage-21 android-kernel --depth=1
+        git clone --recursive https://github.com/wahkxk/kernel_xiaomi_pissarro-qq.git -b lineage-21 android-kernel --depth=1
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/scripts
         sed -i 's/ -dirty//g' setlocalversion
 
