@@ -1,4 +1,4 @@
-name: Build LineageOS 22.1 gta4xlwifi Kernel with KernelSU-Next SuSFS
+name: Build LineageOS 22.1 judyp Kernel with KernelSU-Next SuSFS
 
 on:
   workflow_dispatch:
@@ -46,7 +46,7 @@ jobs:
     - name: Download kernel source
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone --recursive https://github.com/JacoaFur/android_kernel_samsung_gta4xl.git -b SuSFS android-kernel --depth=1
+        git clone --recursive https://github.com/wahkxk/android_kernel_lge_sdm845.git -b SuSFS android-kernel --depth=1
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/scripts
         sed -i 's/ -dirty//g' setlocalversion
 
@@ -70,7 +70,7 @@ jobs:
         export KBUILD_BUILD_USER=$(echo ${{ github.actor }} | tr A-Z a-z)
         BA_CMD="CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi-"
         EX_CMD="LD=ld.lld LLVM=1 LLVM_IAS=1"
-        DEFCONFIG="exynos9611-gta4xlwifi_defconfig"
+        DEFCONFIG="lineageos_judyp_defconfig"
         make O=out ARCH=arm64 CC=clang $BA_CMD $EX_CMD $DEFCONFIG
         make -j$(nproc --all) O=out ARCH=arm64 CC=clang $BA_CMD $EX_CMD
 
@@ -88,25 +88,25 @@ jobs:
       if: env.CHECK_IMAGE_1 == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://github.com/JacoaFur/AnyKernel3-Fork.git -b gta4xl-susfs --depth=1 AnyKernel3
+        git clone https://github.com/JacoaFur/AnyKernel3-Fork.git -b judyp-susfs --depth=1 AnyKernel3
         cp android-kernel/out/arch/arm64/boot/Image AnyKernel3/
         rm -rf AnyKernel3/.git*
 
     - name: Compress AnyKernel3 folder with Kernel to zip
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/AnyKernel3
-        zip -r $GITHUB_WORKSPACE/AK3-LOS22.1-gta4xlwifi_KernelSU-Next_SuSFS_${{ env.KSUVER }}-${{ env.BUILD_TIME }}.zip ./*
+        zip -r $GITHUB_WORKSPACE/AK3-LOS22.1-judyp_KernelSU-Next_SuSFS_${{ env.KSUVER }}-${{ env.BUILD_TIME }}.zip ./*
 
     - name: Upload Image
       if: env.CHECK_IMAGE_1 == 'true'
       uses: actions/upload-artifact@v4
       with:
-        name: Image-LOS22.1-gta4xlwifi_KernelSU-Next_SuSFS_${{ env.KSUVER_1 }}
+        name: Image-LOS22.1-judyp_KernelSU-Next_SuSFS_${{ env.KSUVER_1 }}
         path: kernel_workspace/android-kernel/out/arch/arm64/boot/Image
 
     - name: Upload AnyKernel3 zip
       if: env.CHECK_IMAGE_1 == 'true'
       uses: actions/upload-artifact@v4
       with:
-        name: AK3-LOS22.1-gta4xlwifi_KernelSU-Next_SuSFS_${{ env.KSUVER_1 }}-${{ env.BUILD_TIME }}
+        name: AK3-LOS22.1-judyp_KernelSU-Next_SuSFS_${{ env.KSUVER_1 }}-${{ env.BUILD_TIME }}
         path: kernel_workspace/AnyKernel3/*
